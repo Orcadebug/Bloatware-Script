@@ -1,0 +1,51 @@
+# List of built-in apps to remove
+$bloatware = @(
+    "Microsoft.3DBuilder",
+    "Microsoft.Microsoft3DViewer",
+    "Microsoft.XboxApp",
+    "Microsoft.XboxGamingOverlay",
+    "Microsoft.Xbox.TCUI",
+    "Microsoft.XboxGameOverlay",
+    "Microsoft.XboxSpeechToTextOverlay",
+    "Microsoft.ZuneMusic",
+    "Microsoft.ZuneVideo",
+    "Microsoft.People",
+    "Microsoft.MicrosoftSolitaireCollection",
+    "Microsoft.GetHelp",
+    "Microsoft.Getstarted",
+    "Microsoft.MixedReality.Portal",
+    "Microsoft.Office.OneNote",
+    "Microsoft.SkypeApp",
+    "Microsoft.Whiteboard",
+    "Microsoft.Messaging",
+    "Microsoft.Paint3D",
+    "Microsoft.MSPaint",
+    "Microsoft.WindowsAlarms",
+    "Microsoft.WindowsFeedbackHub",
+    "Microsoft.WindowsMaps",
+    "Microsoft.WindowsSoundRecorder",
+    "Microsoft.YourPhone",
+    "Microsoft.BingNews",
+    "Microsoft.BingWeather",
+    "Microsoft.BingSports",
+    "Microsoft.BingFinance",
+    "Microsoft.BingFoodAndDrink",
+    "Microsoft.BingHealthAndFitness",
+    "Microsoft.GetHelp",
+    "Microsoft.People"
+)
+
+Write-Host "Removing Appx packages for current users..." -ForegroundColor Cyan
+foreach ($app in $bloatware) {
+    Get-AppxPackage -AllUsers -Name $app -ErrorAction SilentlyContinue |
+        Remove-AppxPackage -ErrorAction SilentlyContinue
+}
+
+Write-Host "Removing provisioned packages for new users..." -ForegroundColor Cyan
+foreach ($app in $bloatware) {
+    Get-AppxProvisionedPackage -Online |
+        Where-Object {$_.DisplayName -eq $app} |
+        Remove-AppxProvisionedPackage -Online -ErrorAction SilentlyContinue
+}
+
+Write-Host "Done! You may need to reboot for everything to take effect." -ForegroundColor Green
